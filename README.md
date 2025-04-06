@@ -1,6 +1,3 @@
 # Projeto_GARH_VaR
- Calculo da volatilidade do ETF SPY (S&P 500)
- em decorrência da implementação da Política 
- de Reciprocidade Tarifária anunciada pela
- Administração Trump
+ Cálculo do impacto na volatilidade do ETF SPY (S&P 500) após a implementação da Política de Reciprocidade do governo Trump
  
