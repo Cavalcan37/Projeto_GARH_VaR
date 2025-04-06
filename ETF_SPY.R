@@ -34,12 +34,12 @@ install.packages("tseries")
 library(tseries)
 
 # Teste ADF
-adf_test <- adf.test(retornos_smal11.sa) # H0: Série Não Estacionária
+adf_test <- adf.test(retornos_spy)       # H0: Série Não Estacionária
 print(adf_test)                          # H1: Série Estacionária
 
 # Teste KPSS
-kpss_test <- kpss.test(retornos_smal11.sa) # H0: Série Estacionária
-print(kpss_test)                           # H0: Série Não Estacionária
+kpss_test <- kpss.test(retornos_spy)     # H0: Série Estacionária
+print(kpss_test)                         # H0: Série Não Estacionária
 ################################################################################
 
 # Passo 5: Análise exploratória
@@ -47,7 +47,7 @@ plot(retornos_spy, main = "Retornos Diários SPY", col = "blue4", lwd = 1)
 hist(retornos_spy, breaks = 25, main = "Distribuição dos Retornos SPY", 
      xlab = "Retornos", col = "lightgreen",probability = TRUE)
 
-densidade <- density(retornos_smal11.sa)  # Calcula a densidade kernel
+densidade <- density(retornos_spy)  # Calcula a densidade kernel
 lines(densidade, col = "red", lwd = 2)  # Adiciona a curva de densidade ao gráfico
 
 ArchTest(retornos_spy, lags = 12)
@@ -200,10 +200,10 @@ library(quantmod)
 library(PerformanceAnalytics)  # Para funções financeiras avançadas
 
 # Baixar dados do SMAL11.SA
-getSymbols("SMAL11.SA", src = "yahoo", from = "2020-01-01", to = Sys.Date())
+getSymbols("SPY", src = "yahoo", from = "2020-01-01", to = Sys.Date())
 
 # Calcular retornos diários (usando preços ajustados)
-retornos_diarios <- dailyReturn(Ad(SMAL11.SA), type = "log")  # Retornos logarítmicos
+retornos_diarios <- dailyReturn(Ad(SPY), type = "log")  # Retornos logarítmicos
 
 # Remover valores NA (se houver)
 retornos_diarios <- na.omit(retornos_diarios)
@@ -212,3 +212,5 @@ retornos_diarios <- na.omit(retornos_diarios)
 retorno_geometrico_anual <- Return.annualized(retornos_diarios, geometric = TRUE)
 retorno_geometrico_anual
 ################################################################################
+
+# Teste 1 para GitHub
