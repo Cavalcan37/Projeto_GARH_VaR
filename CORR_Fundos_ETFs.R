@@ -37,6 +37,9 @@ precos_normalizados <- lapply(dados, function(x) {
   (Cl(x) / as.numeric(Cl(x)[1])) * 100
 })
 
+# Temas
+library(ggthemes)
+
 # 2. Combinar em um único xts e converter para dataframe
 precos_combinados <- do.call(merge, precos_normalizados)
 colnames(precos_combinados) <- ativos
