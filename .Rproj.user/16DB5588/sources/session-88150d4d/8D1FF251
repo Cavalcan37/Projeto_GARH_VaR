@@ -3,7 +3,7 @@
     "path": "G:/Meu Drive/ANALISE DE DADOS_R/PROJETO LINKEDIN/Projeto_GARH_VaR/ETF_SPY.R",
     "project_path": "ETF_SPY.R",
     "type": "r_source",
-    "hash": "2537612287",
+    "hash": "3504465471",
     "contents": "",
     "dirty": false,
     "created": 1743912175286.0,
@@ -13,15 +13,15 @@
         "tempName": "Untitled1",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "29,80",
-        "scrollLine": "0"
+        "cursorPosition": "222,0",
+        "scrollLine": "213"
     },
     "folds": "",
-    "lastKnownWriteTime": 1743915240,
+    "lastKnownWriteTime": 1745029705,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1743915240902,
+    "last_content_update": 1745029705950,
     "read_only": false,
     "read_only_alternatives": []
 }

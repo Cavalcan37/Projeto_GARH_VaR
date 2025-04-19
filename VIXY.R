@@ -1,4 +1,4 @@
-# ETF GLOBAL ÍNDICE DE AÇÕES DO S&p 500 (SPY)
+# ETN GLOBAL iPath S&P 500 VIX Short-Term Futures ETN (VIXY)
 #DIAGNÓSTICO DE VOLATILIDADE
 
 # Passo 1: Instalação e carregamento dos pacotes 
@@ -9,23 +9,31 @@ library(quantmod) # Funções 'getSymbols' e 'ROC'
 library(rugarch) # Funções 'ugarchspec', 'ugarchfit' e 'sigma'
 library(FinTS) # Função 'ArchTest'
 
-# Ensaio Prévio - SPY
-getSymbols("SPY", from = "2025-01-01", to = Sys.Date())
-chartSeries(SPY, theme = "white", TA = "addVo(); addBBands()")
+# Ensaio Prévio - VIXY
+getSymbols("VIXY", from = "2025-03-01", to = Sys.Date())
+chartSeries(VIXY, theme = "white", TA = "addVo(); addBBands()")
 
-# Passo 2: Obtenção dos dados do ETF Índice de Ações S&P 500 (SPY) 
-spy <- getSymbols("SPY", src = "yahoo", from = "2024-01-01", to = Sys.Date(), auto.assign = FALSE)
-spy <- na.locf(spy)  # Valores faltantes preenchidos com o último valor válido
+# Passo 2: Obtenção dos dados do iPath S&P 500 VIX Short-Term Futures ETN (VIXY)
+vixy <- getSymbols("VIXY", src = "yahoo", from = "2020-01-01", to = Sys.Date(), auto.assign = FALSE)
+vixy <- na.locf(vixy)  # Valores faltantes preenchidos com o último valor válido
 # Muinto comum em finanças                           
-spy
+vixy
 
-# Passo 3: Calcule os retornos do SPY
-retornos_spy <- na.omit(ROC(Cl(spy), type = "discrete"))
-retornos_spy
+# Passo 3: Calcule os retornos do VIXY
+retornos_vixy <- na.omit(ROC(Cl(vixy), type = "discrete"))
+retornos_vixy
+View(retornos_vixy)
+
+################################################
+# Salva no Excel para Calculo do Retorno       #
+################################################
+library(openxlsx)                              #
+write.xlsx(retornos_vixy, "retornos_vixy.xlsx")#
+################################################
 
 # Renomeia a coluna
-colnames(retornos_spy) <- "Retornos_SPY"
-retornos_spy
+colnames(retornos_vixy) <- "Retornos_VIXY"
+retornos_vixy
 
 ################################################################################
 # Passo 4: Testar Estacionariedade
@@ -34,57 +42,59 @@ install.packages("tseries")
 library(tseries)
 
 # Teste ADF
-adf_test <- adf.test(retornos_spy)       # H0: Série Não Estacionária
-print(adf_test)                          # H1: Série Estacionária
+adf_test <- adf.test(retornos_vixy)       # H0: Série Não Estacionária
+print(adf_test)                           # H1: Série Estacionária
 
 # Teste KPSS
-kpss_test <- kpss.test(retornos_spy)     # H0: Série Estacionária
-print(kpss_test)                         # H0: Série Não Estacionária
+kpss_test <- kpss.test(retornos_vixy)     # H0: Série Estacionária
+print(kpss_test)                          # H0: Série Não Estacionária
 ################################################################################
 
 # Passo 5: Análise exploratória
-plot(retornos_spy, main = "Retornos Diários SPY", col = "blue4", lwd = 1)
-hist(retornos_spy, breaks = 25, main = "Distribuição dos Retornos SPY", 
+par(mfrow = c(2, 1))
+plot(retornos_vixy, main = "Retornos Diários VIXY", col = "blue4", lwd = 1)
+hist(retornos_vixy, breaks = 25, main = "Distribuição dos Retornos VIXY", 
      xlab = "Retornos", col = "lightgreen",probability = TRUE)
 
-densidade <- density(retornos_spy)  # Calcula a densidade kernel
+densidade <- density(retornos_vixy)  # Calcula a densidade kernel
 lines(densidade, col = "red", lwd = 2)  # Adiciona a curva de densidade ao gráfico
+par(mfrow = c(1, 1))
 
-ArchTest(retornos_spy, lags = 12)
+ArchTest(retornos_vixy, lags = 12)
 
-# Passo 6: Especificação do modelo GARCH(1,1) para SPY
-especificacao_spy <- ugarchspec(
+# Passo 6: Especificação do modelo GARCH(1,1) para VIXY
+especificacao_vixy <- ugarchspec(
   variance.model = list(model = "sGARCH", garchOrder = c(1, 1)),
   mean.model = list(armaOrder = c(0, 0), include.mean = TRUE),
   distribution.model = "std"  # Distribuição t de Student
 )
 
-# Passo 7: Estimação do modelo GARCH(1,1) para SPY
-modelo_garch_spy <- ugarchfit(spec = especificacao_spy, data = retornos_spy)
-print(modelo_garch_spy)
+# Passo 7: Estimação do modelo GARCH(1,1) para VIXY
+modelo_garch_vixy <- ugarchfit(spec = especificacao_vixy, data = retornos_vixy)
+print(modelo_garch_vixy)
 
-# Passo 8: Obtenha a volatilidade estimada para SPY
-volatilidade_estimada_spy <- sigma(modelo_garch_spy)
-volatilidade_estimada_spy
+# Passo 8: Obtenha a volatilidade estimada para VIXY
+volatilidade_estimada_vixy <- sigma(modelo_garch_vixy)
+volatilidade_estimada_vixy
 
 # Passo 9: Plotagem dos retornos e volatilidades estimadas
 
-# Bloco do SPY
+# Bloco do VIXY
 par(mfrow = c(2, 1))  # Divide a área de plotagem em 2 linhas e 1 coluna
 
-# Gráfico de cima: Retornos do Bitcoin
-plot(retornos_spy, main = "Retornos Diários SPY", col = "blue4", lwd = 1)
+# Gráfico de cima: Retornos do VIXY
+plot(retornos_vixy, main = "Retornos Diários VIXY", col = "blue4", lwd = 1)
 legend("topright", 
-       legend = c("Retornos SPY"), 
+       legend = c("Retornos VIXY"), 
        col = c("blue4"), 
        lwd = 1, 
        cex = 0.8,  # Tamanho da legenda
        bty = "n")  # Remove a caixa ao redor da legenda
 
-# Gráfico de baixo: Volatilidade estimada do SPY
-plot(volatilidade_estimada_spy, main = "Volatilidade Estimada SPY (GARCH(1,1))", col = "red3", lwd = 2)
+# Gráfico de baixo: Volatilidade estimada do VIXY
+plot(volatilidade_estimada_vixy, main = "Volatilidade Estimada VIXY (GARCH(1,1))", col = "red3", lwd = 2)
 legend("topright", 
-       legend = c("Volatilidade SPY"), 
+       legend = c("Volatilidade VIXY"), 
        col = c("red3"), 
        lwd = 2, 
        cex = 0.8,  # Tamanho da legenda
@@ -93,7 +103,7 @@ legend("topright",
 par(mfrow = c(1, 1))
 
 # Passo 10: Previsão de volatilidade para os próximos 30* dias
-previsao_volatilidade <- ugarchforecast(modelo_garch_spy, n.ahead = 252)
+previsao_volatilidade <- ugarchforecast(modelo_garch_vixy, n.ahead = 30)
 print(previsao_volatilidade)
 
 # Passo 11: Plotagem da previsão de volatilidade
@@ -108,14 +118,14 @@ alpha <- 0.05
 # Calcular o VaR para os retornos históricos
 # Usando a volatilidade estimada pelo GARCH(1,1) e a distribuição t de Student
 # O quantil da distribuição t de Student é obtido com qt()
-df <- modelo_garch_spy@fit$coef["shape"]  # Graus de liberdade da distribuição t
-VaR_historico <- volatilidade_estimada_spy * qt(alpha, df)
+df <- modelo_garch_vixy@fit$coef["shape"]  # Graus de liberdade da distribuição t
+VaR_historico <- volatilidade_estimada_vixy * qt(alpha, df)
 
 # Plotar o VaR histórico sobre os retornos
-plot(retornos_spy, main = "Retornos SPY com VaR (95%)", col = "blue4", lwd = 1)
+plot(retornos_vixy, main = "Retornos VIXY com VaR (95%)", col = "blue4", lwd = 1)
 lines(VaR_historico, col = "red", lwd = 2)
 legend("topright", 
-       legend = c("Retornos SPY", "VaR 95%"), 
+       legend = c("Retornos VIXY", "VaR 95%"), 
        col = c("blue4", "red"), 
        lwd = c(1, 2), 
        cex = 0.8, 
@@ -128,17 +138,17 @@ alpha <- 0.05
 
 # Calcular o VaR para 10 dias
 # A volatilidade para 10 dias é a volatilidade diária multiplicada pela raiz quadrada de 10
-volatilidade_10_dias <- volatilidade_estimada_spy * sqrt(10)
+volatilidade_10_dias <- volatilidade_estimada_vixy * sqrt(10)
 
 # Calcular o VaR para 10 dias usando a distribuição t de Student
-df <- modelo_garch_spy@fit$coef["shape"]  # Graus de liberdade da distribuição t
+df <- modelo_garch_vixy@fit$coef["shape"]  # Graus de liberdade da distribuição t
 VaR_10_dias <- volatilidade_10_dias * qt(alpha, df)
 
 # Plotar o VaR para 10 dias sobre os retornos
-plot(retornos_spy, main = "Retornos do SPY com VaR (95%) para 10 Dias", col = "blue4", lwd = 1)
+plot(retornos_vixy, main = "Retornos do VIXY com VaR (95%) para 10 Dias", col = "blue4", lwd = 1)
 lines(VaR_10_dias, col = "red", lwd = 2)
 legend("topright", 
-       legend = c("Retornos SPY", "VaR 95% (10 Dias)"), 
+       legend = c("Retornos VIXY", "VaR 95% (10 Dias)"), 
        col = c("blue4", "red"), 
        lwd = c(1, 2), 
        cex = 0.8, 
@@ -146,13 +156,13 @@ legend("topright",
 
 # Value-at-Risk (VaR):
 # Passo 14: Extrair a volatilidade estimada pelo modelo GARCH(1,1)
-volatilidade_diaria <- as.numeric(tail(volatilidade_estimada_spy, 1))  # Último valor da volatilidade diária
+volatilidade_diaria <- as.numeric(tail(volatilidade_estimada_vixy, 1))  # Último valor da volatilidade diária
 
 # Passo 15: Definir o nível de confiança (95% é comum)
 alpha <- 0.05
 
 # Passo 16: Calcular o quantil da distribuição t de Student
-df <- modelo_garch_spy@fit$coef["shape"]  # Graus de liberdade da distribuição t
+df <- modelo_garch_vixy@fit$coef["shape"]  # Graus de liberdade da distribuição t
 quantil <- qt(alpha, df)  # Quantil para o nível de confiança alpha
 
 # Passo 17: Calcular o VaR para 1 dia
@@ -177,12 +187,12 @@ cat("VaR para 10 dias (95% de confiança):", VaR_10_dias, "\n")
 
 # LINKEDIN######################################################################
 # Plotando Retornos e VaR + GARCH(1,1) abaixo (p/Linkedin)
-# Ensaio Prévio - SMAL11.SA
-getSymbols("SPY", from = "2025-01-01", to = Sys.Date())
-chartSeries(SPY, theme = "white", TA = "addVo(); addBBands()")
+# Ensaio Prévio - VIXY
+getSymbols("VIXY", from = "2025-03-01", to = Sys.Date())
+chartSeries(VIXY, theme = "white", TA = "addVo(); addBBands()")
 
 par(mfrow = c(1, 1))
-plot(retornos_spy, main = "Retornos SPY com VaR (95%)", col = "blue4", lwd = 1)
+plot(retornos_vixy, main = "Retornos VIXY com VaR (95%)", col = "blue4", lwd = 1)
 graf <- lines(VaR_historico, col = "red", lwd = 2)
 
 # Gráfico Retornos + VaR 
@@ -190,7 +200,7 @@ par(mfrow = c(2, 1))
 graf
 
 # Gráfico GARCH(1,1)
-plot(volatilidade_estimada_spy, main = "Volatilidade SPY (GARCH(1,1))", col = "red3", lwd = 2)
+plot(volatilidade_estimada_vixy, main = "Volatilidade VIXY (GARCH(1,1))", col = "red3", lwd = 2)
 
 par(mfrow = c(1, 1)) 
 
@@ -199,11 +209,11 @@ par(mfrow = c(1, 1))
 library(quantmod)
 library(PerformanceAnalytics)  # Para funções financeiras avançadas
 
-# Baixar dados do SMAL11.SA
-getSymbols("SPY", src = "yahoo", from = "2020-01-01", to = Sys.Date())
+# Baixar dados do VIXY
+getSymbols("VIXY", src = "yahoo", from = "2020-01-01", to = Sys.Date())
 
 # Calcular retornos diários (usando preços ajustados)
-retornos_diarios <- dailyReturn(Ad(SPY), type = "log")  # Retornos logarítmicos
+retornos_diarios <- dailyReturn(Ad(VIXY), type = "log")  # Retornos logarítmicos
 
 # Remover valores NA (se houver)
 retornos_diarios <- na.omit(retornos_diarios)
@@ -212,5 +222,3 @@ retornos_diarios <- na.omit(retornos_diarios)
 retorno_geometrico_anual <- Return.annualized(retornos_diarios, geometric = TRUE)
 retorno_geometrico_anual
 ################################################################################
-
-# Teste 1 para GitHub

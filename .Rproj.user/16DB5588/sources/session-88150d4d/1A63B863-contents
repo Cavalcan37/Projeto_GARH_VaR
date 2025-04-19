@@ -139,3 +139,9 @@ chartSeries(EEM, theme = "white", TA = "addVo(); addBBands()")
 # FM (Mercados Emergentes Small Caps)
 getSymbols("FM", from = "2025-01-01", to = Sys.Date())
 chartSeries(FM, theme = "white", TA = "addVo(); addBBands()")
+
+##
+##
+getSymbols("VIXY", from = "2025-01-01", to = Sys.Date())
+chartSeries(VIXY, theme = "white", TA = "addVo(); addBBands()")
+
